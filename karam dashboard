@@ -1,0 +1,72 @@
+def create_line(**kwargs):
+        query=''' select distinct client_name, round(avg(cast(overdue as float))) as overdue_each_customer from ks_outstanding group by client_name limit 100'''
+        conn=kwargs['engine'].connect()
+        df=pd.read_sql(query, conn)
+        df.dropna(inplace=True)
+        df.fillna(0,inplace=True)
+        conn.close()
+         
+        return df.to_dict(orient='records')
+        
+def recovery_plot(**kwargs):
+        query=''' select client_name, cdi_no, cdi_date, invoice_date, invoice_amount_fc, invoice_amount_inr, pending_amount_fc,pendind_amount_inr from ks_outstanding order by cdi_date '''
+        conn=kwargs['engine'].connect()
+        df=pd.read_sql(query, conn)
+        df['recovery_amount_fc']=df['invoice_amount_fc']-df['pending_amount_fc']
+        df['recovery_amount_inr']=df['invoice_amount_inr']-df['pendind_amount_inr']
+        df.dropna(axis='rows',subset=['cdi_date'],inplace=True)
+        df.fillna(0,inplace=True)
+        
+        conn.close()
+        return df[['cdi_date', 'recovery_amount_inr']].to_dict(orient='records')
+        
+ def recovery_plot_customer(**kwargs):
+        query=''' select distinct (client_name), cdi_no, cdi_date, invoice_date, invoice_amount_fc, invoice_amount_inr, pending_amount_fc,pendind_amount_inr from ks_outstanding where client_name='HINDUSTAN PETROLEUM CORPORATION LIMITED' order by cdi_date'''
+        conn=kwargs['engine'].connect()
+        df=pd.read_sql(query, conn)
+        df['recovery_amount_fc']=df['invoice_amount_fc']-df['pending_amount_fc']
+        df['recovery_amount_inr']=df['invoice_amount_inr']-df['pendind_amount_inr']
+        df.dropna(axis='rows',subset=['cdi_date'],inplace=True)
+        df.fillna(0,inplace=True)
+        
+        conn.close()
+        return df[['cdi_date', 'recovery_amount_inr']].to_dict(orient='records')   
+        
+ def recommend_action(**kwargs):
+        query=''' select client_name, round(cast(overdue as float)) as overdue_each_customer from ks_outstanding order by client_name limit 100'''
+        conn=kwargs['engine'].connect()
+        df=pd.read_sql(query, conn)
+        df.dropna(inplace=True)
+        df.fillna(0,inplace=True)
+               
+        conditions = [(df['overdue_each_customer'] <= 1500),(df['overdue_each_customer'] > 1500) & (df['overdue_each_customer'] <= 2000),(df['overdue_each_customer'] > 2000) & (df['overdue_each_customer']<= 2500),(df['overdue_each_customer'] > 2500)]
+        values = ['No action to be taken', 'Fine imposed pay now ', 'Fine exceeded, Pay to avoid legal actions', 'Legal action would be taken']
+
+        df['RECOMMENDED ACTION'] = np.select(conditions, values)
+        conn.close()
+        return df.to_dict(orient='records') 
+        
+def price_recommend(**kwargs):
+        query=''' select * from karam_prototype2'''
+        conn=kwargs['engine'].connect()
+        df=pd.read_sql(query, conn)
+        
+        df.fillna(0,inplace=True)
+        df['RECOMMENDED PRICE'] = np.random.randint(10000,99999, size=len(df))
+        
+        conn.close()
+        return df[['contractor name','invoice amount','outstanding amount','RECOMMENDED PRICE']].to_dict(orient='records')
+        
+def discount(**kwargs):
+        query=''' select "Customer Type", "Customer Name", "Invoice Number/Receipt Number",cast(date_dif as int) , "Invoice Date" from custom_reportt order by "Customer Type" '''
+        conn=kwargs['engine'].connect()
+        df=pd.read_sql(query, conn)
+               
+        conditions = [(df['date_dif'] <= 0),(df['date_dif'] > 2) & (df['date_dif'] <= 30),(df['date_dif'] >=31 )]
+        values = ['3%', '2%','No discount']
+
+        df['Cash Discount'] = np.select(conditions, values)
+       
+        df["Discount"] = (df["Customer Type"].str.replace("AUTHORIZED DEALER", "30%").str.replace("DEALER", "15%").str.replace("END CONSUMER", "25%").str.replace("AUTHORIZED RETAILER", "28%").str.replace("AUTHORIZED CHANNEL PARTNER", "35%")) 
+        conn.close()
+        return df[["Customer Type","Customer Name","Invoice Date",'Cash Discount','Discount']].to_dict(orient='records')
