@@ -1,0 +1,44 @@
+def collection_trend(**kwargs):
+        
+        data=[{'Customer_name': 'Raj industries','Account_no': '000014587','year': '2004','collection': 1165,'forecast': 938},{'Customer_name': 'hanu industries','Account_no': '000016398','year': '2005','collection': 1135,'forecast': 1120,},{'Customer_name': 'jfk industries','Account_no': '000024576','year': '2006','collection': 1157,'forecast': 1167,},{'Customer_name': 'tele_com','Account_no': '000026361','year': '2007','collection': 1139,'forecast': 1110},{'Customer_name': 'binod','Account_no': '000066379','year': '2008','collection': 1036,'forecast': 691}]
+
+        df = pd.DataFrame(data)  
+        df=df.loc[df['Account_no']==kwargs['filter_value'][0]]
+        
+        return df.to_dict(orient='records')
+
+def collection_filter(**kwargs):
+        
+        data=[{'Customer_name': 'Raj industries','Account_no': '000014587','year': '2004','collection': 1165,'forecast': 938},{'Customer_name': 'hanu industries','Account_no': '000016398','year': '2005','collection': 1135,'forecast': 1120,},{'Customer_name': 'jfk industries','Account_no': '000024576','year': '2006','collection': 1157,'forecast': 1167,},{'Customer_name': 'tele_com','Account_no': '000026361','year': '2007','collection': 1139,'forecast': 1110},{'Customer_name': 'binod','Account_no': '000066379','year': '2008','collection': 1036,'forecast': 691}]
+
+        df = pd.DataFrame(data)  
+        df['Account_no'].unique()
+        
+        
+        return df.to_dict(orient='records')
+        
+        
+def collection_trendd(**kwargs):
+        
+        data=[{'Customer_name': 'Raj industries','Account_no': '000014587','year': '2004','collection': 1165,'forecast': 938},{'Customer_name': 'hanu industries','Account_no': '000016398','year': '2005','collection': 1135,'forecast': 1120,},{'Customer_name': 'jfk industries','Account_no': '000024576','year': '2006','collection': 1157,'forecast': 1167,},{'Customer_name': 'tele_com','Account_no': '000026361','year': '2007','collection': 1139,'forecast': 1110},{'Customer_name': 'binod','Account_no': '000066379','year': '2008','collection': 1036,'forecast': 691}]
+
+        df = pd.DataFrame(data)  
+        df=df.loc[df['Account_no']==kwargs['filter_value'][0]]
+        return df[['Customer_name','collection','forecast']].to_dict(orient='records')
+        
+def default_trend(**kwargs):
+        
+        data=[{'Customer_name': 'Raj industries','Account_no': '000014587','year': '2004','actual': 567,'forecast': 838},{'Customer_name': 'hanu industries','Account_no': '000016398','year': '2005','actual': 1135,'forecast': 720,},{'Customer_name': 'jfk industries','Account_no': '000024576','year': '2006','actual': 3157,'forecast': 2870,},{'Customer_name': 'tele_com','Account_no': '000026361','year': '2007','actual': 1939,'forecast': 1220},{'Customer_name': 'binod','Account_no': '000066379','year': '2008','actual': 1036,'forecast': 691}]
+
+        df = pd.DataFrame(data)  
+        return df.to_dict(orient='records')
+
+
+    
+def default_trendd(**kwargs):
+        
+        data=[{'Customer_name': 'Raj industries','Account_no': '000014587','year': '2004','actual': 567,'forecast': 838},{'Customer_name': 'hanu industries','Account_no': '000016398','year': '2005','actual': 1135,'forecast': 720,},{'Customer_name': 'jfk industries','Account_no': '000024576','year': '2006','actual': 3157,'forecast': 2870,},{'Customer_name': 'tele_com','Account_no': '000026361','year': '2007','actual': 1939,'forecast': 1220},{'Customer_name': 'binod','Account_no': '000066379','year': '2008','actual': 1036,'forecast': 691}]
+
+        df = pd.DataFrame(data)  
+        
+        return df[['Customer_name','actual','forecast']].to_dict(orient='records') 
