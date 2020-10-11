@@ -1,0 +1,24 @@
+def networks(**kwargs):
+        query=''' select * from new_telecom '''
+        conn=kwargs['engine'].connect()
+        df1=pd.read_sql(query, conn)
+        conn.close()
+        return df1.to_dict(orient='records')
+
+    def networks_bar(**kwargs):
+        query=''' select quarter, cast(data_downlink as int),cast(data_uplink as int),cast(voice_in as int),cast(voice_out as int), cast(country_code as int) from new_telecom '''
+        conn=kwargs['engine'].connect()
+        df1=pd.read_sql(query, conn)
+        df1['voice_avg']=(df1['voice_in']+df1['voice_out'])/2
+        df1['data_avg']=(df1['data_downlink']+df1['data_uplink'])/2
+        conn.close()
+        return df1[['quarter','voice_avg','data_avg']].to_dict(orient='records')
+
+    def churn_plot(**kwargs):
+        query=''' select state,area,date,cast("new connections" as int),cast("decreased connection" as int), cast("churn percentage" as float) from cp '''
+        conn=kwargs['engine'].connect()
+        df1=pd.read_sql(query, conn)
+        conn.close()
+        df1=df1.loc[df1['state']==kwargs['filter_value'][0]]
+        df1=df1.loc[df1['area']==kwargs['filter_value'][1]]
+        return df1[['date','new connections','decreased connection']].to_dict(orient='records')
